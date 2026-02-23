@@ -59,8 +59,18 @@ def load_models():
         pd_model = joblib.load('pd_model.pkl')
         lgd_model = joblib.load('lgd_model.pkl')
         return pd_model, lgd_model
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         st.error('❌ Models not found. Ensure pd_model.pkl and lgd_model.pkl are in the app directory.')
+        st.error(f'Details: {str(e)}')
+        return None, None
+    except ModuleNotFoundError as e:
+        st.error('❌ Missing required dependencies to load models.')
+        st.error(f'Missing module: {str(e)}')
+        st.info('ℹ️ Solution: Ensure all dependencies in requirements.txt are installed (imbalanced-learn, shap, xgboost, lightgbm)')
+        return None, None
+    except Exception as e:
+        st.error(f'❌ Error loading models: {type(e).__name__}')
+        st.error(f'Details: {str(e)}')
         return None, None
 
 pd_model, lgd_model = load_models()
